@@ -5,6 +5,44 @@ This is the master handoff reference. Every skill transition in the delivery pro
 Phase numbers in parentheses refer to the internal phase numbering of the named skill, not a global sequence.
 Read each skill's SKILL.md to see its phases defined.
 
+---
+
+## Entry Points
+
+```
+<<human: new project>>
+  └→ facilitating-inception (po-agent)
+
+<<human: new session, story already assigned to me>>
+  └→ resuming-sessions (any-agent) — L1 RIGID — fires before anything else
+
+<<human: new session, no story assigned>>
+  └→ using-forge pull protocol (Step 3 below)
+```
+
+---
+
+## Pull Protocol (Step 3)
+
+```
+developer-agent:
+  └→ story claimed from ready-for-dev
+       └→ managing-feature-flags (create flag; confirm OFF)
+       └→ running-atdd-sessions (L1 RIGID)
+
+qa-agent:
+  └→ story claimed from ready-for-qa
+       └→ running-regression-suite
+
+po-agent:
+  └→ story claimed from ready-for-acceptance
+       └→ approving-stories
+```
+
+---
+
+## Full Skill Graph
+
 ```
 facilitating-inception
   └→ inception Phase 4 (Event Storming)    → facilitating-event-storming (po-agent + ux-agent)
@@ -19,43 +57,68 @@ establishing-ubiquitous-language
   └→ on complete → CONTEXT.md committed; unblocks all agents
 
 writing-stories
-  └→ gate pass (all 4 gates)     → building-iteration-map (po-agent)
-  └→ gate fail (any gate)        → back to PO draft (same skill, Gate 1)
-  └→ story has security surface  → threat-modeling (secops-agent) before ready-for-dev
+  └→ all 4 gates pass, no security surface → building-iteration-map (po-agent)
+  └→ any gate fails                         → back to Gate 1 (same skill, po-agent)
+  └→ story has security surface             → threat-modeling (secops-agent) before ready-for-dev
+
+threat-modeling
+  └→ security ACs injected  → writing-stories Gate 4 (po-agent)
+  └→ story cannot be safe   → writing-stories back to in-analysis (po-agent)
 
 building-iteration-map
-  └→ on complete → bootstrapping-project (devops-agent) [Iteration 0]
+  └→ on complete  → bootstrapping-project (devops-agent) [Iteration 0]
+  └→ concurrent   → deciding-architecture (architect-agent) [Iteration 1 ADRs]
 
 bootstrapping-project
-  └→ on complete → validating-test-harness (qa-agent)
+  └→ concurrent on start      → securing-pipeline (secops-agent + devops-agent)
+  └→ checklist complete       → validating-test-harness (qa-agent)
+
+securing-pipeline
+  [terminal — setup skill; gates run automatically on every push after configuration]
 
 validating-test-harness
-  └→ PASS → Iteration 1 opens; developer-agents may pull from ready-for-dev
-  └→ FAIL → blocks Iteration 1; back to devops-agent
+  └→ concurrent in Iter 0  → writing-acceptance-tests (qa-agent) [dummy harness test]
+  └→ PASS                  → Iteration 1 opens; developer-agents pull via using-forge Step 3
+  └→ FAIL                  → bootstrapping-project (devops-agent)
+
+writing-acceptance-tests
+  └→ outer AT written + RED → running-atdd-sessions (developer-agent)
 
 deciding-architecture
-  └→ ADR accepted → unblocks developer-agent for the affected story
+  └→ ADR accepted           → running-atdd-sessions resumes (developer-agent)
+  └→ ADR changes story scope → writing-stories back to in-analysis (po-agent)
+
+resuming-sessions
+  └→ outer AT RED on resume        → running-atdd-sessions (developer-agent)
+  └→ outer AT GREEN unexpectedly   → STOP; post to Linear; await human
 
 running-atdd-sessions
-  └→ each AC complete              → running-desk-checks (qa-agent)
-  └→ desk check approved           → next AC in same skill
-  └→ all ACs + desk checks done    → story moves to ready-for-qa
-  └→ architecture decision needed  → pauses; deciding-architecture (architect-agent)
+  └→ each sub-slice               → running-tdd-loops (developer-agent) [returns to caller]
+  └→ each AC outer AT GREEN       → running-desk-checks (qa-agent)
+  └→ desk check approved          → next AC (same skill, loop)
+  └→ all ACs + desk checks done   → running-regression-suite (qa-agent) [story → ready-for-qa]
+  └→ architecture decision needed → deciding-architecture (architect-agent) [pauses]
+
+running-tdd-loops
+  [returns to running-atdd-sessions — never exits to a different pipeline skill]
 
 running-desk-checks
-  └→ APPROVED → developer-agent continues to next AC
-  └→ FAILED   → story stays in-dev; developer-agent fixes and re-triggers
+  └→ APPROVED → running-atdd-sessions (developer-agent) [next AC]
+  └→ FAILED   → running-atdd-sessions (developer-agent) [fix + re-trigger same AC]
 
 running-regression-suite
-  └→ PASS → story moves to ready-for-acceptance; approving-stories (po-agent)
-  └→ FAIL → story moves to ready-for-dev; developer-agent pulls
+  └→ PASS → approving-stories (po-agent) [story → ready-for-acceptance]
+  └→ FAIL → story → ready-for-dev; developer-agent pulls via using-forge Step 3
 
 approving-stories
-  └→ PASS → story moves to ready-to-deploy; HUMAN approves
-  └→ FAIL → story moves to ready-for-dev; developer-agent pulls
+  └→ PASS → finishing-stories (po-agent + devops-agent) [story → ready-to-deploy; HUMAN gate]
+  └→ FAIL → story → ready-for-dev; developer-agent pulls via using-forge Step 3
 
 finishing-stories
-  └→ flag flipped + smoke pass → story moves to done
-  └→ smoke fail                → flag flipped OFF; story to ready-for-dev
-  └→ all stories done          → iteration-completion check (using-forge protocol)
+  └→ flag flip + smoke PASS → story → done; iteration completion check
+  └→ smoke FAIL             → flag OFF; story → ready-for-dev; developer-agent pulls via using-forge Step 3
+  └→ all stories done       → STOP; post iteration completion notice; await human
+
+managing-feature-flags
+  [lifecycle protocol — called at story pull, finishing-stories; no pipeline outbound]
 ```
