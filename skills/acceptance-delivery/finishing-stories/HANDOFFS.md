@@ -10,6 +10,9 @@
 ## On smoke test FAIL
 
 **Immediate action:** Flip feature flag OFF
-**Action:** Post incident note in Linear
-**Routes to:** developer-agent (story returns to `ready-for-dev`)
+**Next action:** Move story to `ready-for-dev` in Linear
+**Post to Linear:** Incident note with smoke test failure details
 **Human notification required:** Do not retry without human review
+
+**Pull model:** Do NOT assign the story to a developer-agent directly.
+The story sits in `ready-for-dev`. A developer-agent will pick it up on their next session start via the `using-forge` pull protocol.
