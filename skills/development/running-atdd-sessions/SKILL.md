@@ -1,0 +1,120 @@
+---
+name: running-atdd-sessions
+level: L1-RIGID
+owner: developer-agent
+trigger: story is in `in-dev`; this is the ONLY thing a developer agent does when in-dev
+---
+
+# running-atdd-sessions
+
+## Description
+
+The L1 RIGID skill for developer agents. Runs the ATDD (Acceptance Test-Driven Development) loop for a story: write the outer Acceptance Test first, drive it to RED, then run TDD inner loops (FE + BE) one sub-slice at a time until the outer test is GREEN. No implementation code before the outer test is RED. No skipping sub-slices. No batching FE then BE. This skill overrides everything.
+
+---
+
+## The Loop
+
+```
+═══════════════════════════════════════════════
+ ATDD SESSION — ONE STORY
+═══════════════════════════════════════════════
+
+PRECONDITION:
+  outer Acceptance Test file exists (even if skeleton)
+  outer Acceptance Test is RED
+  If GREEN: STOP — post to Linear, wait for human
+
+FOR EACH AC in the story (in order):
+
+  Write/update outer Acceptance Test for this AC → confirm RED
+
+  FOR EACH sub-slice in this AC:
+
+    ┌─────────────────────────────────────┐
+    │  FE INNER LOOP                      │
+    │  1. Write component test → RED      │
+    │  2. Write minimum FE code → GREEN   │
+    │  3. Refactor → still GREEN          │
+    │  ✓ sub-slice FE done                │
+    └─────────────────────────────────────┘
+    ┌─────────────────────────────────────┐
+    │  BE INNER LOOP                      │
+    │  1. Write CDC contract test → RED   │
+    │  2. Write minimum BE code → GREEN   │
+    │  3. Refactor → still GREEN          │
+    │  ✓ sub-slice BE done                │
+    └─────────────────────────────────────┘
+
+    Update story snapshot: sub-slice status → done
+    NEVER move to next sub-slice until current is fully GREEN
+
+  All sub-slices for this AC done:
+    → outer Acceptance Test for this AC → GREEN
+    → trigger running-desk-checks skill
+    → WAIT for desk check approval before next AC
+
+All ACs done + all desk checks approved:
+  → move story to `ready-for-qa` in Linear
+  → commit story snapshot update
+  → check iteration completion (using-forge protocol)
+```
+
+---
+
+## Rules That Cannot Be Broken
+
+1. **The outer Acceptance Test file is the first file you create or edit. No exceptions.**
+
+2. **No implementation code before outer AT is RED and you have seen it fail.**
+   "I know it will be RED" is not sufficient. Run it. See it fail.
+
+3. **FE loop and BE loop for each sub-slice run sequentially, not in parallel.**
+   FE first, then BE. Never batch all FE loops, then all BE loops.
+
+4. **One sub-slice at a time.** Complete it fully (FE + BE, both GREEN) before starting the next.
+
+5. **Desk check after every AC, not after the whole story.**
+   Move to the next AC only after the desk check is approved.
+
+6. **No architecture decisions.** If you find you need to make one, stop.
+   Post to Linear: "Architecture decision needed: [description]. @architect-agent"
+   Wait for an ADR before continuing.
+
+---
+
+## Sub-slice Identification
+
+A sub-slice is the smallest vertical unit within an AC: one UI interaction + its backend response.
+
+Example AC: "Given a logged-in user, when they submit the checkout form, then they see an order confirmation with an order number."
+
+Sub-slices:
+1. Render checkout form with submit button (FE only, no BE)
+2. Submit calls POST /orders endpoint (FE calls BE, BE returns stub)
+3. Display order number from response (FE renders BE response)
+4. POST /orders persists to database (BE fully implemented)
+
+Each sub-slice is a complete FE+BE loop.
+
+---
+
+## Story Snapshot Update
+
+After each sub-slice completes, update `stories/[STORY-ID].md`:
+
+```yaml
+ac:
+  - id: AC-1
+    status: in-progress
+    sub_slices:
+      - id: SS-1
+        description: Render checkout form
+        fe_status: done
+        be_status: done
+        completed_at: 2026-06-09T20:00:00Z
+      - id: SS-2
+        description: Submit calls POST /orders
+        fe_status: in-progress
+        be_status: pending
+```
