@@ -67,13 +67,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-pulldown-cmark = "0.9"      # Markdown parser
+pulldown-cmark = "0.13"     # Markdown parser
 serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.9"          # Fixture YAML parsing
+serde_yml = "0.1"           # Fixture YAML parsing (serde_yaml is deprecated)
 petgraph = "0.6"            # Handoff graph (CFG) analysis
 regex = "1.10"              # State name extraction
-walkdir = "2.4"             # Recursive directory traversal
-thiserror = "1.0"           # Error type derive
+walkdir = "2.5"             # Recursive directory traversal
+thiserror = "2.0"           # Error type derive
 ```
 
 ---
@@ -81,7 +81,7 @@ thiserror = "1.0"           # Error type derive
 ## 4. File Layout
 
 ```
-evals/contract-tests/
+tools/contract-tests/
 ├── Cargo.toml                           # Rust workspace config
 ├── src/
 │   ├── main.rs                          # CLI entry: cargo run → all tests
@@ -136,9 +136,9 @@ pub enum SkillCategory {
 }
 
 pub enum SkillLevel {
-    L1Rigid,    // L1_RIGID — cannot be overridden
-    L2Guided,   // L2_GUIDED — structured process with human gates
-    L3Mech,     // L3_MECH — mechanical execution
+    L1Rigid,    // L1-RIGID — cannot be overridden (fixture uses L1-RIGID)
+    L2Guided,   // L2-GUIDED — structured process with human gates (fixture uses L2-GUIDED)
+    L3Mech,     // L3-MECH — mechanical execution (fixture uses L3-MECH)
 }
 
 pub enum AgentRole {
@@ -198,8 +198,8 @@ pub struct HandoffGraph {
 }
 
 pub struct Transition {
-    pub from: State,
-    pub to: State,
+    pub from: String,                     // state name (look up canonical properties in HandoffGraph.nodes)
+    pub to: String,                       // state name (look up canonical properties in HandoffGraph.nodes)
     pub trigger: String,                 // skill name that triggers this transition
     pub condition: Option<String>,       // Gate condition (e.g., "all ACs pass")
 }
@@ -445,8 +445,8 @@ REF-002: README references non-existent skill
 ```
 SKILL-003: Missing required section
   → skills/meta/resuming-sessions/SKILL.md
-  → missing: "Handoffs" section (or HANDOFFS.md file)
-  → fix: add handoff description or create HANDOFFS.md
+  → missing: "Rules" section
+  → fix: add "## Rules" section to SKILL.md
 ```
 
 ### 6.8 `loop_section_order` — ORDER-001 to ORDER-099
@@ -627,7 +627,7 @@ metadata:
 loops:
   - skill: using-forge
     category: meta
-    level: L1_RIGID
+    level: L1-RIGID
     owner: [all-agents]
     has_loop: true
     eval_name: using-forge
@@ -635,7 +635,7 @@ loops:
 
   - skill: resuming-sessions
     category: meta
-    level: L1_RIGID
+    level: L1-RIGID
     owner: [all-agents]
     has_loop: true
     eval_name: session-resume
@@ -643,35 +643,35 @@ loops:
 
   - skill: loop-guardian
     category: meta
-    level: L1_RIGID
+    level: L1-RIGID
     owner: [all-agents]
     has_loop: true
     description: Pre-flight loop guardian — stall detection, budget brakes, human gates
 
   - skill: facilitating-inception
     category: discovery
-    level: L2_GUIDED
+    level: L2-GUIDED
     owner: [po-agent, ux-agent]
     has_loop: true
     description: Inception loop — Lean Canvas, Empathy Map, Trade-off Sliders
 
   - skill: facilitating-event-storming
     category: discovery
-    level: L2_GUIDED
+    level: L2-GUIDED
     owner: [po-agent, ux-agent]
     has_loop: true
     description: Event storming loop — domain event discovery, CONTEXT.md generation
 
   - skill: establishing-ubiquitous-language
     category: discovery
-    level: L2_GUIDED
+    level: L2-GUIDED
     owner: [po-agent]
     has_loop: true
     description: Ubiquitous language loop — CONTEXT.md maintenance
 
   - skill: writing-stories
     category: discovery
-    level: L2_GUIDED
+    level: L2-GUIDED
     owner: [po-agent]
     has_loop: true
     eval_name: story-gate-rejection
@@ -679,42 +679,42 @@ loops:
 
   - skill: building-iteration-map
     category: discovery
-    level: L3_MECH
+    level: L3-MECH
     owner: [po-agent]
     has_loop: true
     description: Iteration mapping loop — topological sort, dependency resolution
 
   - skill: deciding-architecture
     category: architecture
-    level: L2_GUIDED
+    level: L2-GUIDED
     owner: [architect-agent]
     has_loop: true
     description: Architecture loop — ADR lifecycle, scope pause/resume
 
   - skill: bootstrapping-project
     category: iteration-zero
-    level: L3_MECH
+    level: L3-MECH
     owner: [devops-agent]
     has_loop: true
     description: Iteration 0 bootstrap loop — CI/CD, environments, feature flags
 
   - skill: validating-test-harness
     category: iteration-zero
-    level: L2_GUIDED
+    level: L2-GUIDED
     owner: [qa-agent, devops-agent]
     has_loop: true
     description: Test harness validation loop — gate before Iteration 1
 
   - skill: securing-pipeline
     category: acceptance-delivery
-    level: L2_GUIDED
+    level: L2-GUIDED
     owner: [secops-agent, devops-agent]
     has_loop: true
     description: Pipeline security loop — SAST/DAST gates, continuous compliance
 
   - skill: running-atdd-sessions
     category: development
-    level: L1_RIGID
+    level: L1-RIGID
     owner: [developer-agent]
     has_loop: true
     eval_name: no-implementation-before-red
@@ -725,21 +725,21 @@ loops:
 
   - skill: running-tdd-loops
     category: development
-    level: L1_RIGID
+    level: L1-RIGID
     owner: [developer-agent]
     has_loop: true
     description: TDD inner loop — FE component RED→GREEN→REFACTOR, BE CDC RED→GREEN→REFACTOR
 
   - skill: writing-acceptance-tests
     category: quality
-    level: L2_GUIDED
+    level: L2-GUIDED
     owner: [qa-agent]
     has_loop: true
     description: Acceptance test writing loop — outer AT creation per AC
 
   - skill: running-desk-checks
     category: quality
-    level: L2_GUIDED
+    level: L2-GUIDED
     owner: [qa-agent]
     has_loop: true
     eval_name: desk-check-blocking
@@ -747,35 +747,35 @@ loops:
 
   - skill: running-regression-suite
     category: quality
-    level: L2_GUIDED
+    level: L2-GUIDED
     owner: [qa-agent]
     has_loop: true
     description: Regression loop — full suite on test environment
 
   - skill: approving-stories
     category: acceptance-delivery
-    level: L3_MECH
+    level: L3-MECH
     owner: [po-agent]
     has_loop: true
     description: PO acceptance loop — UI smoke test per story
 
   - skill: finishing-stories
     category: acceptance-delivery
-    level: L3_MECH
+    level: L3-MECH
     owner: [po-agent, devops-agent]
     has_loop: true
     description: Release loop — flag flip, smoke test, Linear update
 
   - skill: managing-feature-flags
     category: acceptance-delivery
-    level: L3_MECH
+    level: L3-MECH
     owner: [devops-agent]
     has_loop: true
     description: Feature flag lifecycle loop — create → off → on → retired
 
   - skill: threat-modeling
     category: acceptance-delivery
-    level: L2_GUIDED
+    level: L2-GUIDED
     owner: [secops-agent]
     has_loop: true
     description: Threat modeling loop — security AC injection or story rejection
@@ -813,7 +813,7 @@ required_skill_sections:
     - heading: "State Model"
       machine_name: state_model
       required: true
-      aliases: ["The Loop", "Loop States", "States"]
+      aliases: ["The Loop", "Loop States", "Loop State", "States"]
     - heading: "Rules"
       machine_name: rules
       required: true
@@ -932,15 +932,10 @@ test tests::fixture_drift ... FAILED
 
 test tests::loop_sections ... ok (0 failures)
 
-test tests::fixture_category ... ok (1 category mismatch detected)
-  CAT-001: Fixture category mismatch
-    → skill: securing-pipeline
-    → fixture says: category: iteration-zero
-    → actual path: skills/acceptance-delivery/securing-pipeline/
-    → fix: update fixture category to acceptance-delivery
+test tests::fixture_category ... ok (0 failures)
 
-failures: 8, success: 4
-total diagnostics: 32 failures, 14 warnings
+failures: 7, success: 5
+total diagnostics: 31 failures, 14 warnings
 ```
 ```
 
@@ -961,7 +956,7 @@ The harness is complete when:
 
 ---
 
-## 10. Error Handling
+## 11. Error Handling
 
 ### Malformed Markdown
 
@@ -987,7 +982,7 @@ If a file parses partially (some sections found, others not):
 
 ---
 
-## 11. Suppression / Waiver Mechanism
+## 12. Suppression / Waiver Mechanism
 
 Some failures may be temporarily acceptable (e.g., a skill is being actively developed and its LOOP.md is not yet written). The harness supports suppression via a `waivers.yaml` file:
 
@@ -1012,7 +1007,7 @@ waivers:
 
 ---
 
-## 12. Adding a New Validator
+## 13. Adding a New Validator
 
 1. Pick an unused prefix from the registry (Section 7)
 2. Create `src/validators/{name}.rs`
@@ -1029,7 +1024,7 @@ waivers:
 
 ---
 
-## 13. Deferrals (Layer 2)
+## 14. Deferrals (Layer 2)
 
 These are out of scope for the initial implementation but documented for future work:
 
@@ -1042,7 +1037,7 @@ These are out of scope for the initial implementation but documented for future 
 
 ---
 
-## 14. Appendix: Relationship to Existing Evals
+## 15. Appendix: Relationship to Existing Evals
 
 The existing 7 evals are **behavioral** — they test whether an agent follows a skill correctly when given a prompt.
 
@@ -1126,7 +1121,7 @@ state_model:
 
 Extracted tokens are validated as state names if they match **at least one** of these criteria:
 
-1. **Known state prefix:** Matches `^(ready-for|in|done|awaiting)-[a-z0-9]+(-[a-z0-9]+)*$`
+1. **Known state prefix:** Matches `^(ready-for|ready-to|in|done|awaiting)-[a-z0-9]+(-[a-z0-9]+)*$`
 2. **Known terminal state:** Exactly `done`
 3. **Known entry point:** Appears in fixture `entry_points` list
 4. **Known terminal state:** Appears in fixture `terminal_states` list
@@ -1157,10 +1152,10 @@ Most HANDOFFS.md files use prose sections with explicit transition declarations.
 
 **Pattern 1: Bold-labeled transitions**
 ```markdown
-## On desk check APPROVED:
+**On desk check APPROVED:**
 Return to `running-atdd-sessions`. Preserve developer assignment.
 
-## On desk check FAILED:
+**On desk check FAILED:**
 Return to `running-atdd-sessions`. Story moves back to first pending AC.
 ```
 
@@ -1171,7 +1166,7 @@ Return to `running-atdd-sessions`. Story moves back to first pending AC.
 
 **Pattern 2: Explicit state transitions**
 ```markdown
-## Outbound
+**Outbound**
 - `ready-for-qa` → `running-regression-suite`
 ```
 
@@ -1199,8 +1194,9 @@ skill-name
 
 **Parsing rules:**
 1. Identify code blocks (triple backticks) containing tree lines
-2. Lines starting with whitespace + `└→` or `├→` are transition lines
-3. Extract:
+2. The line immediately before a `└→` block, if it contains a kebab-case skill name without markers, is the `from_skill`
+3. Lines starting with whitespace + `└→` or `├→` are transition lines
+4. Extract:
    - **Condition text**: text between `└→` and `→` (the arrow before target)
    - **Target skill**: text after `→` and before `(` or end of line
    - **Agent role**: text inside `()`
