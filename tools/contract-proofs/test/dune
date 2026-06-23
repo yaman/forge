@@ -1,3 +1,0 @@
-(test
- (name test_checker)
- (modules test_checker forge_state_machine))

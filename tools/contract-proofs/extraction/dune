@@ -1,4 +1,0 @@
-(executable
- (public_name forge-state-machine)
- (name checker)
- (modules checker forge_state_machine))
