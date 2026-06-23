@@ -62,19 +62,21 @@ iteration-board loop-state file) reflects the new state.
 
 ## State Transition Rule
 
-- `none` → `in-dev` / `in-qa` / `in-acceptance` when the agent atomic-claims
-  a story from the appropriate entry-point state (`ready-for-dev`,
-  `ready-for-qa`, `ready-for-acceptance`).
-- `in-dev` → `ready-for-qa` after all ACs pass desk checks
-  (via `running-atdd-sessions`).
-- `ready-for-qa` → `in-qa` when qa-agent claims; on regression PASS →
-  `ready-for-acceptance`; on FAIL → `ready-for-dev`.
-- `ready-for-acceptance` → `in-acceptance` when po-agent claims; on PASS →
-  `ready-to-deploy`; on FAIL → `ready-for-dev`.
-- `ready-to-deploy` → `done` after `finishing-stories` smoke PASS.
+transition in-analysis → in-analysis
+  trigger new project cold start
+  handoff facilitating-inception to po-agent
 
-All transitions must be atomic in Linear. State and loop-state file must
-remain consistent.
+transition in-analysis → in-dev
+  trigger developer-agent claims story from ready-for-dev
+  handoff running-atdd-sessions to developer-agent
+
+transition in-analysis → in-qa
+  trigger qa-agent claims story from ready-for-qa
+  handoff running-regression-suite to qa-agent
+
+transition in-analysis → in-acceptance
+  trigger po-agent claims story from ready-for-acceptance
+  handoff approving-stories to po-agent
 
 ## Halt Conditions
 

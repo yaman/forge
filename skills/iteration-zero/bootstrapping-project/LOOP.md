@@ -64,13 +64,13 @@ and Linear:
 
 ## State Transition Rule
 
-- `iteration_0_status: pending` → `in_progress` when this loop fires.
-- `iteration_0_status: in_progress` → `blocked` if a checklist item
-  cannot be completed (no human approval, missing access).
-- `iteration_0_status: in_progress` → `complete` when every bucket is
-  verified AND `securing-pipeline` has posted its signal.
-- Iteration 1 may not start until `iteration_0_status: complete` AND
-  `validating-test-harness` PASS.
+transition in-analysis → in-analysis
+  trigger bootstrapping begins
+  handoff securing-pipeline to secops-agent
+
+transition in-analysis → in-analysis
+  trigger bootstrapping checklist complete and security baseline ready
+  handoff validating-test-harness to qa-agent
 
 ## Halt Conditions
 

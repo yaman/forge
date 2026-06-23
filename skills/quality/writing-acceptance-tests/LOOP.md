@@ -49,14 +49,9 @@ snapshot:
 
 ## State Transition Rule
 
-- ACs that are UI-testable → outer AT file moves from `absent` to
-  `exists-and-red`; the AC remains part of the story in `in-dev` and
-  flows into `running-atdd-sessions`.
-- ACs that are NOT UI-testable → AC is returned to `in-analysis`; the
-  story returns to `in-analysis` for `writing-stories` to rewrite the
-  AC. This loop does not advance Linear state for invalid ACs.
-- Per-AC writing during `in-dev` does not change Linear state; only the
-  test artifact moves.
+transition in-analysis → in-dev
+  trigger outer acceptance test written and confirmed RED
+  handoff running-atdd-sessions to developer-agent
 
 ## Halt Conditions
 

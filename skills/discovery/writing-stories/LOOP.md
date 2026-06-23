@@ -69,17 +69,22 @@ Read from `docs/inception.loop.md` and Linear:
 ## State Transition Rule
 
 ```
-candidate (unprocessed)
-  └→ Gate 1 pass → drafted
-       └→ Gate 2 pass → gate_2_passed
-            └→ Gate 3 pass → gate_3_passed
-                 └→ (security surface?) → yes → threat-modeling → Gate 4
-                                          → no  → Gate 4
-                      └→ Gate 4 pass → in-analysis (Linear)
-```
+transition in-analysis → in-analysis
+  trigger story has security surface (auth/payments/PII/permissions)
+  handoff threat-modeling to secops-agent
 
-A story moves backwards only to Gate 1 (not to the immediately preceding
-gate). Stories in `in-analysis` may flow into `building-iteration-map`.
+transition in-analysis → in-analysis
+  trigger all four gates pass with no security surface
+  handoff building-iteration-map to po-agent
+
+transition in-analysis → in-analysis
+  trigger any gate fails review
+  handoff writing-stories to po-agent
+
+transition in-analysis → in-analysis
+  trigger all stories written for iteration
+  handoff building-iteration-map to po-agent
+```
 
 ## Halt Conditions
 

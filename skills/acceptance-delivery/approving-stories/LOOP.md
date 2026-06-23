@@ -56,10 +56,15 @@ Per-story loop state held in `stories/[STORY-ID].loop.md`:
 
 ## State Transition Rule
 
-- `in-acceptance` → `ready-to-deploy` on PASS.
-- `in-acceptance` → `ready-for-dev` on FAIL.
-- `verdict` flips between `in-progress` → `pass` | `fail` once per
-  iteration.
+```
+transition in-acceptance → ready-to-deploy
+  trigger ACs pass and human approves production release
+  handoff finishing-stories to po-agent
+
+transition in-acceptance → ready-for-dev
+  trigger any AC failed
+  handoff running-atdd-sessions to developer-agent
+```
 
 ## Halt Conditions
 

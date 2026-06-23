@@ -33,8 +33,21 @@ timestamp and outcome.
 
 ## State Transition Rule
 
-On `cleared`: do not modify any state. Return control.
-On `halted-*`: append `guardian_check` with reason. Do not advance state.
+transition in-dev → in-dev
+  trigger loop check cleared
+  handoff using-forge to all-agents
+
+transition in-dev → halted-stall
+  trigger no progress for N iterations
+  handoff using-forge to all-agents
+
+transition in-dev → halted-human-gate
+  trigger human gate required
+  handoff using-forge to all-agents
+
+transition in-dev → halted-unsafe
+  trigger unsafe condition detected
+  handoff using-forge to all-agents
 
 ## Halt Conditions
 

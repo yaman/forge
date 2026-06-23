@@ -13,13 +13,6 @@ Writes outer Acceptance Tests from acceptance criteria. These tests define done 
 
 ---
 
-## Rules
-
-1. One AC must map to at least one executable Acceptance Test.
-2. Assertions must be customer-visible.
-3. If an AC is not testable through the UI, the AC is invalid — send story back to `in-analysis`.
-4. Acceptance Tests are written before implementation.
-
 ---
 
 ## Test Shape

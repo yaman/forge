@@ -57,11 +57,15 @@ regression runner output:
 
 ## State Transition Rule
 
-- `in-qa` → `ready-for-acceptance` on PASS.
-- `in-qa` → `ready-for-dev` on FAIL (developer-agent pulls again via
-  `using-forge` Step 3).
-- `verdict` flips between `in-progress` → `pass` | `fail` once per
-  iteration.
+```
+transition ready-for-qa → ready-for-acceptance
+  trigger regression suite passes
+  handoff approving-stories to po-agent
+
+transition ready-for-qa → ready-for-dev
+  trigger regression suite fails
+  handoff running-atdd-sessions to developer-agent
+```
 
 ## Halt Conditions
 

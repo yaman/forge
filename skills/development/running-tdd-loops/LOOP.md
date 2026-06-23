@@ -63,13 +63,17 @@ Per-story loop-state file at `stories/[STORY-ID].loop.md`:
 
 ## State Transition Rule
 
-```
-fe-red → fe-green → fe-refactor → be-red → be-green → be-refactor → done
-```
+transition in-dev → in-dev
+  trigger FE component loop complete (RED→GREEN→REFACTOR)
+  handoff running-atdd-sessions to developer-agent
 
-A phase only advances on a passing observation (RED is the proof of
-the red phase; GREEN is the proof of green/refactor). A failed
-observation does not advance the phase.
+transition in-dev → in-dev
+  trigger BE CDC loop complete (RED→GREEN→REFACTOR)
+  handoff running-atdd-sessions to developer-agent
+
+transition in-dev → in-dev
+  trigger new behavior discovered during refactor
+  handoff running-atdd-sessions to developer-agent
 
 ## Halt Conditions
 

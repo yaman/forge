@@ -59,12 +59,13 @@ and Linear:
 
 ## State Transition Rule
 
-- Story stays in `in-analysis` throughout this loop.
-- On success: security ACs added; story continues through
-  `writing-stories` Gate 4.
-- On unsafe: story remains in `in-analysis`; po-agent re-evaluates
-  (potentially rewriting or rejecting the story).
-- `secops_signoff` flips from `false` → `true` on success.
+transition in-analysis → in-analysis
+  trigger security ACs injected into story
+  handoff writing-stories to po-agent
+
+transition in-analysis → in-analysis
+  trigger story cannot be made safe within current scope
+  handoff writing-stories to po-agent
 
 ## Halt Conditions
 

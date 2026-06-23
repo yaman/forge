@@ -62,13 +62,25 @@ Session-level fields:
 
 ## State Transition Rule
 
-- `in-dev` remains `in-dev` after resume (sub-slices restart; AC status
-  unchanged).
-- `in-qa` remains `in-qa`; route to `running-regression-suite`.
-- `in-acceptance` remains `in-acceptance`; route to `approving-stories`.
-- If story is no longer assigned or no longer in progress → transition to
-  `ready-for-dev` (fallback pull).
-- An unexpected GREEN never auto-advances state; it raises a human gate.
+transition in-dev → in-dev
+  trigger session resume with outer AT RED and story assigned
+  handoff running-atdd-sessions to developer-agent
+
+transition in-qa → in-qa
+  trigger session resume with story in QA
+  handoff running-regression-suite to qa-agent
+
+transition in-acceptance → in-acceptance
+  trigger session resume with story in acceptance
+  handoff approving-stories to po-agent
+
+transition in-analysis → ready-for-dev
+  trigger session resume with no story assigned
+  handoff using-forge to all-agents
+
+transition in-dev → halted-human-gate
+  trigger outer AT unexpectedly GREEN on resume
+  handoff using-forge to all-agents
 
 ## Halt Conditions
 

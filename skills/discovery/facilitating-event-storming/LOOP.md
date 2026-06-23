@@ -62,12 +62,14 @@ Local event-storm state (held in `docs/event-storm.yaml` draft and in
 ## State Transition Rule
 
 ```
-phase_1 → phase_2 → phase_3 → phase_4 → phase_5 → phase_6
-```
+transition in-analysis → in-analysis
+  trigger event storming phases 1-5 complete
+  handoff establishing-ubiquitous-language to po-agent
 
-Each transition requires human review of the artifact. Phases may not
-skip. Phase 6 (Ubiquitous Language) commits `CONTEXT.md` and resolves all
-red hotspots before the loop is allowed to exit.
+transition in-analysis → in-analysis
+  trigger CONTEXT.md committed and human-approved
+  handoff writing-stories to po-agent
+```
 
 ## Halt Conditions
 

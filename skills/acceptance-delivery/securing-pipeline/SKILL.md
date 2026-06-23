@@ -23,15 +23,6 @@ Adds and maintains security gates in the delivery pipeline: SAST, DAST where app
 
 ---
 
-## Rules
-
-1. Critical vulnerabilities block the pipeline.
-2. High vulnerabilities require explicit human waiver if not fixed immediately.
-3. Secrets in git are an immediate stop-ship event.
-4. Security tool noise must be tuned — if everyone ignores it, the gate is broken.
-
----
-
 ## Output
 
 Post pipeline security baseline to Linear iteration milestone:

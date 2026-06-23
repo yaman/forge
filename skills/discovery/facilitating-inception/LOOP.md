@@ -54,22 +54,26 @@ Read from `docs/inception.loop.md`:
 ## State Transition Rule
 
 ```
-lean-canvas
-  └─ approved → empathy-map
-empathy-map
-  └─ approved → trade-off-sliders
-trade-off-sliders
-  └─ constraints committed → event-storming
-event-storming
-  └─ event-storm.yaml + CONTEXT.md approved → story-writing
-story-writing
-  └─ all stories pass four-gate review → iteration-mapping
-iteration-mapping
-  └─ map approved → complete
-```
+transition in-analysis → in-analysis
+  trigger Lean Canvas completed and human-approved
+  handoff facilitating-inception to ux-agent
 
-No state may skip a phase. No state may combine two phases. Every
-transition requires human approval of the preceding artifact.
+transition in-analysis → in-analysis
+  trigger Empathy Map completed and human-approved
+  handoff facilitating-inception to po-agent
+
+transition in-analysis → in-analysis
+  trigger Trade-off Sliders committed to project.constraints.yaml
+  handoff facilitating-event-storming to po-agent
+
+transition in-analysis → in-analysis
+  trigger Event Storming complete and CONTEXT.md committed
+  handoff writing-stories to po-agent
+
+transition in-analysis → in-analysis
+  trigger all stories pass four-gate review
+  handoff building-iteration-map to po-agent
+```
 
 ## Halt Conditions
 
@@ -79,7 +83,7 @@ transition requires human approval of the preceding artifact.
   `docs/inception.loop.md`.
 - `awaiting_human_gate` is set → idle until the human gate is cleared.
 - An ambiguity (red hotspot from event storming) remains unresolved
-  before story writing → halt Phase 4; route to
+  before story writing → halt stall; route to
   `establishing-ubiquitous-language` and back.
 - A term is needed that is not in `CONTEXT.md` → halt; update CONTEXT.md
   before continuing.

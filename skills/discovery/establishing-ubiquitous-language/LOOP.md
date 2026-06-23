@@ -51,13 +51,13 @@ Read from `CONTEXT.md` and `docs/inception.loop.md`:
 
 ## State Transition Rule
 
-- During event-storm Phase 6: state remains `event-storming` until every
-  aggregate is named, every key verb form is canonical, and every red
-  hotspot is resolved. On full resolution → `event-storming` →
-  `story-writing` in `docs/inception.loop.md`.
-- During mid-project updates: state remains whatever phase the calling
-  agent is in. The loop does not change Linear story state — it only
-  mutates `CONTEXT.md` and posts a comment.
+transition in-analysis → in-analysis
+  trigger CONTEXT.md complete and human-approved
+  handoff writing-stories to po-agent
+
+transition in-analysis → in-analysis
+  trigger agent encounters undefined term
+  handoff establishing-ubiquitous-language to po-agent
 
 ## Halt Conditions
 

@@ -69,14 +69,25 @@ per AC.
 
 ## State Transition Rule
 
-- Story remains `in-dev` while any AC has unfinished sub-slices or any
-  desk-check is pending.
-- `in-dev` → `ready-for-qa` when every AC is GREEN and every desk check
-  is approved.
-- Desk check FAILED → story stays `in-dev` (or returns to `in-dev`
-  from `in-deskcheck`); do NOT move to next AC.
-- `running-tdd-loops` is invoked from inside this loop and always
-  returns control here.
+transition ready-for-dev → in-dev
+  trigger story claimed by developer-agent
+  handoff managing-feature-flags to devops-agent
+
+transition in-dev → in-dev
+  trigger sub-slice work needed
+  handoff running-tdd-loops to developer-agent
+
+transition in-dev → ready-for-deskcheck
+  trigger outer acceptance test green for current AC
+  handoff running-desk-checks to qa-agent
+
+transition in-dev → in-dev
+  trigger architecture decision needed
+  handoff deciding-architecture to architect-agent
+
+transition ready-for-deskcheck → ready-for-qa
+  trigger all ACs and desk checks done
+  handoff running-regression-suite to qa-agent
 
 ## Halt Conditions
 

@@ -87,13 +87,6 @@ Post to Linear:
 
 ---
 
-## Rules
-
-1. ADRs define boundaries and constraints, not class names or folder structure.
-2. One ADR = one decision. If you are deciding two things, write two ADRs.
-3. Developers may not continue blocked stories until the ADR exists and is accepted.
-4. If an ADR changes an already accepted story, that story must return to `in-analysis`.
-
 ## State Model
 
 This skill moves a story through an architecture decision pause.

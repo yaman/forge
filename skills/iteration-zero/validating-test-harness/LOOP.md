@@ -52,13 +52,13 @@ Local file state plus Linear / CI:
 
 ## State Transition Rule
 
-- On PASS → `iteration_1_unblocked: true`. developer-agents may now
-  pull stories from `ready-for-dev` via `using-forge` Step 3.
-- On FAIL → `iteration_1_unblocked: false`. Story remains
-  `iteration_1_blocked`. Loop routes back to
-  `bootstrapping-project` (devops-agent) to fix the infrastructure.
-- The dummy test itself is the first AC of `writing-acceptance-tests`;
-  this loop is the gate that proves it can run end-to-end.
+transition in-analysis → in-dev
+  trigger test harness validated and passes
+  handoff using-forge to all-agents
+
+transition in-analysis → in-analysis
+  trigger test harness failed
+  handoff bootstrapping-project to devops-agent
 
 ## Halt Conditions
 

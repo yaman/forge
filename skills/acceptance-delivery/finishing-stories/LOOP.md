@@ -58,11 +58,14 @@ feature-flag platform:
 
 ## State Transition Rule
 
-- `ready-to-deploy` → `done` on smoke PASS.
-- `ready-to-deploy` → `ready-for-dev` on smoke FAIL (flag is flipped
-  OFF).
-- `feature_flag_state_prod` cycles: `off` (pre-flip) → `on` (post-flip)
-  → `off` (on smoke FAIL rollback) → never auto-flipped back to `on`.
+```
+transition ready-to-deploy → done
+  trigger smoke test passes
+
+transition ready-to-deploy → ready-for-dev
+  trigger smoke test fails
+  handoff running-atdd-sessions to developer-agent
+```
 
 ## Halt Conditions
 

@@ -60,16 +60,13 @@ Local file state plus the CI/CD pipeline definition:
 
 ## State Transition Rule
 
-This is a one-shot setup loop — it does not transition through the
-canonical delivery states. State changes live in the CI/CD pipeline
-configuration, not in Linear.
+transition in-analysis → in-analysis
+  trigger Iteration 0 begins
+  handoff securing-pipeline to secops-agent
 
-- Invocation `iteration-0` → gates go from `absent` → `active`; the
-  loop exits when all configured gates are firing.
-- Invocation `new-language` → the new gate goes from `absent` →
-  `active`; the loop exits when the new gate is firing.
-- Invocation `tune-thresholds` → `blocking_thresholds` mutated; the
-  loop exits when the recurring failure is no longer recurring.
+transition in-analysis → in-analysis
+  trigger new language or runtime introduced
+  handoff securing-pipeline to secops-agent
 
 ## Halt Conditions
 

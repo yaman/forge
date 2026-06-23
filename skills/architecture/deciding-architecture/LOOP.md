@@ -53,15 +53,13 @@ Local file state plus Linear:
 
 ## State Transition Rule
 
-- An `in-dev` story blocked on architecture decision stays in `in-dev`
-  (paused) until the ADR is Accepted.
-- An `in-analysis` story touched by an ADR stays in `in-analysis` until
-  the next gate review or refinement.
-- An accepted story that has its scope changed by an ADR → `in-analysis`
-  for re-evaluation by po-agent.
-- ADR draft (Status: Proposed) → ADR accepted (Status: Accepted) →
-  stories resume their previous state (or move to `in-analysis` if
-  scope changed).
+transition in-dev → in-dev
+  trigger ADR accepted by architect-agent
+  handoff running-atdd-sessions to developer-agent
+
+transition in-dev → in-analysis
+  trigger ADR changes story scope
+  handoff writing-stories to po-agent
 
 ## Halt Conditions
 

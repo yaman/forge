@@ -61,14 +61,13 @@ file:
 
 ## State Transition Rule
 
-- The AC moves from `pending` (desk-check perspective) → `in-deskcheck`
-  → `approved` or `failed`.
-- `approved` → developer-agent proceeds to next AC; story stays in
-  `in-dev` until all ACs are done.
-- `failed` → AC moves back to the developer; story remains in
-  `in-dev` (or returns from `in-deskcheck` to `in-dev`).
-- The parent story does not move to `ready-for-qa` until every AC has
-  `desk_check.status: approved`.
+transition in-deskcheck → in-dev
+  trigger desk check approved by QA
+  handoff running-atdd-sessions to developer-agent
+
+transition in-deskcheck → in-dev
+  trigger desk check failed
+  handoff running-atdd-sessions to developer-agent
 
 ## Halt Conditions
 

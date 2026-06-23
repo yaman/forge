@@ -60,13 +60,13 @@ Read from `docs/inception.loop.md`, Linear, and `project.constraints.yaml`:
 
 ## State Transition Rule
 
-- `in-analysis` stories are reassigned to iteration Projects (still
-  `in-analysis`); Iteration 0 stories become the active Cycle.
-- `docs/inception.loop.md` `current_phase` advances from
-  `iteration-mapping` to `complete` once the human confirms.
-- `docs/iteration-board.loop.md` `active_iteration` becomes `0` and
-  `iteration_0_status` becomes `in_progress` when
-  `bootstrapping-project` begins.
+transition in-analysis → in-analysis
+  trigger iteration map complete and Linear projects created
+  handoff bootstrapping-project to devops-agent
+
+transition in-analysis → in-analysis
+  trigger iteration map complete
+  handoff deciding-architecture to architect-agent
 
 ## Halt Conditions
 
