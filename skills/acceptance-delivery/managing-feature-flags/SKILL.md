@@ -40,3 +40,15 @@ Example:
 - Flag defaults OFF unless explicitly approved otherwise
 - Flags are temporary delivery mechanisms, not permanent product configuration
 - Create cleanup stories for long-lived flags
+
+## State Model
+
+This skill manages the lifecycle state of each story's feature flag.
+
+- Story created → flag name reserved in Linear
+- Story in `in-dev` → flag created and OFF
+- Story in test environment → flag verified OFF by default, testable ON
+- Story in `ready-to-deploy` → flag remains OFF in production
+- Human approves go-live → flag flipped ON in production
+- After soak period → flag retired via cleanup story
+
