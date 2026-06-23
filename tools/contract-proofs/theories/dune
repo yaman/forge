@@ -1,0 +1,6 @@
+(coq.theory
+ (name Forge.Contracts)
+ (package forge-contract-proofs)
+ (synopsis "Machine-checked Forge Perfect Loop contract proofs")
+ (modules Generated Transitions Paths Properties)
+ (flags (:standard -Q /opt/homebrew/lib/ocaml/coq/user-contrib/Stdlib Stdlib)))
