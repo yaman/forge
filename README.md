@@ -251,24 +251,19 @@ Loopkit validates state transitions, enforced states, handoff references, desk c
 
 ## Installation
 
-### Cursor
-```text
-/add-plugin forge
-```
-
-### Claude Code
-```bash
-/plugin install forge
-```
-
-### Manual
-Clone this repo and point your agent's skills directory at `skills/`:
 ```bash
 git clone https://github.com/yaman/forge ~/.agents/forge
+bash ~/.agents/forge/install.sh
 ```
-Then add to your agent's system prompt or CLAUDE.md:
-```
-Skills: ~/.agents/forge/skills
+
+This symlinks all 21 skills into `~/.agents/skills/` where OpenCode, Claude Code, and Hermes discover them automatically.
+
+To verify:
+
+```bash
+cargo install loopkit
+loopkit ~/.agents/forge --verbose
+# 21 skills checked. 0 error(s), 0 warning(s).
 ```
 
 ---
