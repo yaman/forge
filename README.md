@@ -1,5 +1,7 @@
 # Forge
 
+[![loopkit verified](https://img.shields.io/badge/loopkit-0_errors%2C_0_warnings-brightgreen)](https://github.com/loopworx/loopkit)
+
 **Forge** is a lean software delivery framework for AI agents — from inception to production.
 
 Where other agent frameworks hand you a coding assistant, Forge gives you an autonomous engineering organization: seven specialized agents, a shared delivery state machine, and a strict ATDD-first process built on battle-tested XP and Lean delivery practices.
@@ -192,6 +194,20 @@ L3 MECH     → finishing-stories, managing-feature-flags
 ```
 
 An agent cannot rationalize "I'll just wire the handler first" — `running-atdd-sessions` is L1 and wins over plan files, conversation summaries, and implementation suggestions without exception.
+
+---
+
+## Verified by Loopkit
+
+All 21 Forge skills are continuously verified by [loopkit](https://github.com/loopworx/loopkit) — a static analysis tool for agent skill contracts. Every SKILL.md, LOOP.md, and `.loopkit.yaml` passes **0 errors, 0 warnings** across all validators:
+
+```bash
+cargo install loopkit
+loopkit . --verbose
+# 21 skills checked. 0 error(s), 0 warning(s).
+```
+
+Loopkit validates state transitions, enforced states, handoff references, desk check patterns, bug feedback loops, progressive disclosure, naming conventions, terminology, and 10 other dimensions of skill quality.
 
 ---
 
