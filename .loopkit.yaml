@@ -96,21 +96,6 @@ enforced_states:
   - name: in-acceptance
     agent: po-agent
     description: PO verifies delivered story matches intent
-  - name: ready-for-dev
-    agent: developer-agent
-    description: Story is ready for a developer to claim
-  - name: ready-for-deskcheck
-    agent: qa-agent
-    description: Developer signals AC is ready for desk check
-  - name: ready-for-qa
-    agent: qa-agent
-    description: All desk checks approved, ready for full QA
-  - name: ready-for-acceptance
-    agent: po-agent
-    description: QA passed, ready for PO acceptance
-  - name: ready-to-deploy
-    agent: devops-agent
-    description: PO approved, ready for production deployment
   - name: done
     agent: ""
     description: Story deployed to production and verified
