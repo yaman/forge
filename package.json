@@ -1,17 +1,59 @@
 {
   "name": "@loopworx/forge",
   "version": "0.1.0",
+  "description": "Lean software delivery framework for AI agents — from inception to production",
   "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/loopworx/forge.git"
+  },
+  "homepage": "https://github.com/loopworx/forge",
+  "bugs": {
+    "url": "https://github.com/loopworx/forge/issues"
+  },
+  "keywords": [
+    "ai-agents",
+    "delivery",
+    "linear",
+    "opencode",
+    "atdd",
+    "tdd",
+    "lean",
+    "xp",
+    "ci-cd"
+  ],
   "bin": {
     "forge": "./bin/forge.ts"
   },
   "scripts": {
-    "dev": "bun run src/cli.ts",
-    "test": "bun test"
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "build": "bun build src/plugin.ts --no-bundle --outfile dist/plugin.js",
+    "init": "bun run bin/forge.ts init",
+    "prepublishOnly": "bun run typecheck && bun test && bun run build"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "agents/",
+    "skills/",
+    "integrations/",
+    ".opencode/commands/",
+    "tsconfig.json",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
+    "@opencode-ai/plugin": "^1.17.13",
     "@opencode-ai/sdk": "latest",
     "commander": "^12.0.0",
     "yaml": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.5.0"
   }
 }

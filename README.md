@@ -1,6 +1,8 @@
 # Forge
 
-[![loopkit verified](https://img.shields.io/badge/loopkit-0_errors%2C_0_warnings-brightgreen)](https://github.com/loopworx/loopkit)
+[![CI](https://github.com/loopworx/forge/actions/workflows/ci.yml/badge.svg)](https://github.com/loopworx/forge/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/@loopworx/forge.svg)](https://www.npmjs.com/package/@loopworx/forge)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **Forge** is a lean software delivery framework for AI agents — from inception to production.
 
@@ -282,16 +284,16 @@ Loopkit validates state transitions, enforced states, handoff references, desk c
 
 ## Installation
 
-```bash
-# Clone the repo
-git clone https://github.com/loopworx/forge ~/projects/forge
-cd ~/projects/forge
+### Quick Start (npm/bun)
 
-# Install dependencies
-bun install
+```bash
+# Install Forge globally
+bun add -g @loopworx/forge
+# or: npm install -g @loopworx/forge
 
 # Initialize Forge in your project
-bun run bin/forge.ts init
+cd my-project
+forge init
 
 # Configure Linear
 # 1. Edit forge.yaml — add your Linear team_key and api_key
@@ -302,13 +304,57 @@ opencode mcp auth linear
 /forge new project
 ```
 
-This installs:
-- `.opencode/plugins/forge.ts` — the Forge plugin (coordinator)
-- `.opencode/agents/` — 7 agent definitions with skill permissions
-- `.opencode/skills/` — 24 skills (SKILL.md + LOOP.md)
-- `.opencode/commands/forge/` — slash commands (`/forge new project`, `/forge.stop`, `/forge.status`, `/forge.approve`)
-- `forge.yaml` — PM configuration (active flag, Linear credentials, agent config, inception phases)
-- `opencode.json` — Linear MCP server config + plugin registration
+### From Source (development)
+
+```bash
+git clone https://github.com/loopworx/forge
+cd forge
+bun install
+bun run bin/forge.ts init
+```
+
+### What `forge init` installs
+
+| Path | Contents |
+|------|----------|
+| `.opencode/plugins/forge.ts` | The Forge plugin (coordinator) |
+| `.opencode/agents/` | 7 agent definitions with skill permissions |
+| `.opencode/skills/` | 24 skills (SKILL.md + LOOP.md) |
+| `.opencode/commands/forge/` | Slash commands (`/forge new project`, `/forge.stop`, `/forge.status`, `/forge.approve`) |
+| `forge.yaml` | PM configuration (Linear credentials, agent config, inception phases) |
+| `opencode.json` | Linear MCP server config + plugin registration |
+
+### Optional: External Tool Integrations
+
+```bash
+# UX design generation (used by ux-agent during Phase 5)
+bash integrations/ui-ux-pro-max.sh
+
+# Codebase knowledge graph (used by dev + architect agents)
+bash integrations/graphify.sh
+
+# Context compression MCP server
+bash integrations/headroom.sh
+
+# CDP browser control (used by qa-agent for desk checks)
+bash integrations/browser-use.sh
+```
+
+---
+
+## CI/CD
+
+Forge has two GitHub Actions workflows:
+
+- **CI** (`.github/workflows/ci.yml`) — runs on every push/PR: typecheck → test → build → verify `forge init`
+- **Release** (`.github/workflows/release.yml`) — runs on `v*` tags: typecheck → test → build → publish to npm → GitHub Release
+
+```bash
+# Run checks locally
+bun run typecheck    # tsc --noEmit
+bun test              # 87 tests
+bun run build         # compile plugin to dist/
+```
 
 ---
 
@@ -334,13 +380,46 @@ Forge skills follow [Anthropic's agent skill best practices](https://platform.cl
 - Add deterministic contract tests for the skill's state machine and handoff routes
 - Skills are state machines with explicit gates, not knowledge documents
 
-See the Forge skill authoring guide for the full process.
+### Development Workflow
+
+```bash
+# Clone and install
+git clone https://github.com/loopworx/forge
+cd forge
+bun install
+
+# Make changes to src/, skills/, agents/, etc.
+
+# Run checks (same as CI)
+bun run typecheck    # tsc --noEmit (src/ + bin/)
+bun test              # 87 tests across 4 files
+bun run build         # compile plugin to dist/plugin.js
+
+# Test forge init locally
+mkdir /tmp/forge-test && cd /tmp/forge-test
+bun run /path/to/forge/bin/forge.ts init
+```
+
+### Submitting Changes
 
 1. Fork the repository
-2. Draft the description field
-3. Write the skill body
-4. Add or update the contract test harness to cover new states/transitions
-5. Submit a PR with `cargo test` results from `tools/contract-tests`
+2. Create a feature branch (`git checkout -b feat/my-feature`)
+3. Make changes — ensure `bun run typecheck && bun test && bun run build` all pass
+4. Submit a PR — CI will run the same checks
+
+### Publishing a Release
+
+Releases are automated via GitHub Actions:
+
+```bash
+# Tag a release
+git tag v0.2.0
+git push origin v0.2.0
+
+# Release workflow runs: typecheck → test → build → npm publish → GitHub Release
+```
+
+The `NPM_TOKEN` secret must be set in GitHub repo settings for npm publishing.
 
 ---
 
