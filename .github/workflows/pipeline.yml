@@ -56,8 +56,20 @@ jobs:
       - name: Lint
         run: bun run lint
 
+  loopkit:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install loopkit
+        run: cargo install loopkit
+      - name: Verify skills
+        run: loopkit . --verbose
+
   test:
-    needs: [typecheck, lint]
+    needs: [typecheck, lint, loopkit]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

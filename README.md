@@ -8,6 +8,7 @@
 [![npm version](https://img.shields.io/npm/v/@loopworx/forge.svg)](https://www.npmjs.com/package/@loopworx/forge)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![lint: oxlint](https://img.shields.io/badge/lint-oxlint-4B9CD3.svg)](https://oxc.rs)
+[![loopkit](https://img.shields.io/badge/loopkit-verified-8B5CF6.svg)](https://github.com/loopworx/loopkit)
 
 **Forge** is an opencode plugin that orchestrates 7 AI agents through a lean software delivery pipeline — from inception to production. It uses Linear as the state spine and runs fully within opencode.
 
@@ -131,7 +132,14 @@ in-analysis → ready-for-dev → in-dev → ready-for-qa → in-qa
 **Security**
 - `modeling-threats`, `securing-pipeline`, `guarding-loops`
 
-All 24 skills are continuously verified by [loopkit](https://github.com/loopworx/loopkit) — 0 errors, 0 warnings.
+All 24 skills are verified on every push by [loopkit](https://github.com/loopworx/loopkit) — a static analyzer for agent skill contracts. It validates state transitions, enforced states, handoff references, desk check patterns, bug feedback loops, progressive disclosure, naming conventions, and terminology across every SKILL.md and LOOP.md file.
+
+```bash
+# Run locally (requires Rust)
+cargo install loopkit
+loopkit .
+# 24 skills checked. 0 error(s), 0 warning(s). 205 verification(s) ran.
+```
 
 ---
 
@@ -159,7 +167,7 @@ bun run /path/to/forge/bin/forge.ts init
 Every push to main runs a single sequential pipeline:
 
 ```
-build → (typecheck ‖ lint) → test → release
+build → (typecheck ‖ lint ‖ loopkit) → test → release
 ```
 
 The release job auto-increments the npm version, publishes, creates a git tag, and generates a GitHub Release with commit history as release notes.
