@@ -39,7 +39,7 @@
     "agents/",
     "skills/",
     "integrations/",
-    ".opencode/commands/",
+    "commands/",
     "tsconfig.json",
     "README.md"
   ],

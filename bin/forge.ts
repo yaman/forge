@@ -42,7 +42,7 @@ program
       console.log("  ✓ Skills installed (.opencode/skills/)");
     }
 
-    const srcCommands = join(packageRoot, ".opencode", "commands", "forge");
+    const srcCommands = join(packageRoot, "commands", "forge");
     if (existsSync(srcCommands)) {
       cpSync(srcCommands, commandsDir, { recursive: true });
       console.log("  ✓ Commands installed (.opencode/commands/forge/)");
